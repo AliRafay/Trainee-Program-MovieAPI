@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Movies.WebAPI
 {
     public class Program
@@ -13,7 +15,8 @@ namespace Movies.WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.
+            //builder.Services.AddDbContext<MovieDbContext>(options =>
+            //    options.UseNpgsql("Host=localhost;Database=MovieDb;Username=postgres;Password=Click123$"));
 
             var app = builder.Build();
 
