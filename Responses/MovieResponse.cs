@@ -1,13 +1,12 @@
 ﻿using Movies.WebAPI.Requests;
 
-namespace Movies.WebAPI.Entities
+namespace Movies.WebAPI.Responses
 {
-    public class Movie
+    public class MovieResponse
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public MovieGenre Genre { get; set; }
-        //public string Director { get; set; }
+        public string Genre { get; set; }
         public int Year { get; set; }
         public double Rating { get; set; }
     }
