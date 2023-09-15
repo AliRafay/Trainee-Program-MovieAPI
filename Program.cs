@@ -15,8 +15,8 @@ namespace Movies.WebAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            //builder.Services.AddDbContext<MovieDbContext>(options =>
-            //    options.UseNpgsql("Host=localhost;Database=MovieDb;Username=postgres;Password=Click123$"));
+            builder.Services.AddDbContext<MovieDbContext>(options =>
+                options.UseNpgsql("Host=localhost;Database=MovieDb;Username=postgres;Password=Click123$"));
 
             var app = builder.Build();
 
