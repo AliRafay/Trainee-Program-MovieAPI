@@ -16,10 +16,10 @@ namespace Movies.WebAPI
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddDbContext<MovieDbContext>(options =>
-                options.UseNpgsql("Host=localhost;Database=MovieDb;Username=postgres;Password=Click123$"));
+                options.UseNpgsql(builder.Configuration.GetConnectionString("MovieDb")));
 
             var app = builder.Build();
-
+         
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
