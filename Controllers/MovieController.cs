@@ -16,9 +16,15 @@ namespace Movies.WebAPI.Controllers
         }
 
         [HttpGet]
-        public List<MovieResponse> GetMovies()
+        public List<MovieResponse> GetMovies(string? searchKeyword, int pageNumber = 1, int count=10)
         {
-            return dbContext.Movies
+            var query = dbContext.Movies.AsQueryable();
+            
+            if (!string.IsNullOrEmpty(searchKeyword))
+                query = query.Where(movie => movie.Title.Contains(searchKeyword));
+
+            return query
+                .OrderBy(movie => movie.Title)
                 .Select(movie => new MovieResponse
                 {
                     Id = movie.Id,
@@ -27,8 +33,9 @@ namespace Movies.WebAPI.Controllers
                     Rating = movie.Rating,
                     Genre = movie.Genre.ToString(),
                 })
+                .Skip((pageNumber-1) * count)
+                .Take(count)
                 .ToList();
-
         }
 
         [HttpGet("{id}")]
@@ -56,6 +63,7 @@ namespace Movies.WebAPI.Controllers
             var movie = new Movie
             {
                 Title = request.Title,
+                Director = request.Director,
                 Year = request.Year,
                 Genre = request.Genre,
                 Rating = request.Rating,
@@ -68,6 +76,7 @@ namespace Movies.WebAPI.Controllers
                 Id = movie.Id,
                 Year = movie.Year,
                 Title = movie.Title,
+                Director = movie.Director,
                 Rating = movie.Rating,
                 Genre = movie.Genre.ToString(),
             };
