@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Movies.WebAPI.Entities;
 using Movies.WebAPI.Requests;
 using Movies.WebAPI.Responses;
@@ -7,6 +8,7 @@ namespace Movies.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MovieController : ControllerBase
     {
         MovieDbContext dbContext;
