@@ -18,6 +18,7 @@ namespace Movies.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.User}")]
         public List<MovieResponse> GetMovies(string? searchKeyword, int pageNumber = 1, int count=10)
         {
             var query = dbContext.Movies.AsQueryable();
@@ -41,6 +42,7 @@ namespace Movies.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = $"{UserRoles.Admin},{UserRoles.User}")]
         public ActionResult<MovieResponse> GetMovie(int id)
         {
             var movie = dbContext.Movies
@@ -60,6 +62,7 @@ namespace Movies.WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserRoles.Admin)]
         public ActionResult<MovieResponse> CreateMovie(MovieRequest request)
         {
             var movie = new Movie
@@ -86,6 +89,7 @@ namespace Movies.WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public ActionResult<bool> UpdateMovie(int id, MovieRequest request)
         {
             var movie = dbContext.Movies
@@ -104,6 +108,7 @@ namespace Movies.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserRoles.Admin)]
         public ActionResult<bool> DeleteMovie(int id)
         {
             var movie = dbContext.Movies

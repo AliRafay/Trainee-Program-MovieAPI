@@ -44,15 +44,6 @@ namespace Movies.WebAPI
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
-                options.SignIn.RequireConfirmedEmail = true;
-                options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultEmailProvider;
-
-                options.Password.RequiredLength = 8;
-                options.Password.RequiredUniqueChars = 3;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireUppercase = true;
 
             })
                 .AddEntityFrameworkStores<MovieDbContext>()
@@ -74,7 +65,8 @@ namespace Movies.WebAPI
                         ValidateAudience = true,
                         ValidAudience = "Audience",
                         ValidIssuer = "Issuer",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("JWTSecret")))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSecret"])),
+                        ClockSkew = TimeSpan.FromMinutes(0)
                     };
                 });
 
@@ -91,7 +83,7 @@ namespace Movies.WebAPI
             }
 
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
