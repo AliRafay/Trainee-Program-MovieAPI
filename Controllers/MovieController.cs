@@ -26,19 +26,27 @@ namespace Movies.WebAPI.Controllers
             if (!string.IsNullOrEmpty(searchKeyword))
                 query = query.Where(movie => movie.Title.Contains(searchKeyword));
 
-            return query
+            var result = query
                 .OrderBy(movie => movie.Title)
-                .Select(movie => new MovieResponse
+                .Select(movie => new
                 {
-                    Id = movie.Id,
-                    Year = movie.Year,
-                    Title = movie.Title,
-                    Rating = movie.Rating,
-                    Genre = movie.Genre.ToString(),
+                    movie.Actors,
+                    movieResponse = new MovieResponse
+                    {
+                        Id = movie.Id,
+                        Year = movie.Year,
+                        Title = movie.Title,
+                        Rating = movie.Rating,
+                        Genre = movie.Genre.ToString(),
+                    }
                 })
-                .Skip((pageNumber-1) * count)
+                .Skip((pageNumber - 1) * count)
                 .Take(count)
                 .ToList();
+
+            result.ForEach(movie => movie.movieResponse.ActorNames = movie.Actors.Select(actor => actor.Name).ToList());
+
+            return result.Select(r => r.movieResponse).ToList();
         }
 
         [HttpGet("{id}")]
