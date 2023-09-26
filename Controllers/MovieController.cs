@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Movies.WebAPI.Entities;
+using Movies.WebAPI.ExternalDTOs;
 using Movies.WebAPI.Requests;
 using Movies.WebAPI.Responses;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace Movies.WebAPI.Controllers
 {
@@ -12,9 +15,11 @@ namespace Movies.WebAPI.Controllers
     public class MovieController : ControllerBase
     {
         MovieDbContext dbContext;
-        public MovieController(MovieDbContext dbContext)
+        IConfiguration configuration;
+        public MovieController(MovieDbContext dbContext, IConfiguration configuration)
         {
             this.dbContext = dbContext;
+            this.configuration = configuration;
         }
 
         [HttpGet]
@@ -127,6 +132,24 @@ namespace Movies.WebAPI.Controllers
             dbContext.SaveChanges();
             return true;
 
+        }
+
+        [HttpGet("top-rated")]
+        [AllowAnonymous]
+        public ActionResult<List<MovieResponse>> GetTopRatedMovies(int pageNumber)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", configuration["MovieDBApiKey"]);
+            var response = httpClient.GetAsync($"https://api.themoviedb.org/3/movie/top_rated?language=en-US&page={pageNumber}").Result;
+            var stringResult = response.IsSuccessStatusCode ? response.Content.ReadAsStringAsync().Result : response.StatusCode.ToString();
+            var topRatedMovieResponse = JsonConvert.DeserializeObject<TopRatedMovieResponse>(stringResult);
+            return topRatedMovieResponse.Results.Select(r => new MovieResponse
+            {
+                Title = r.Title,
+                Year = int.Parse(r.ReleaseDate.Split('-')[0]),
+                Rating = r.VoteAverage,
+            }).ToList();
         }
     }
 }
